@@ -14,10 +14,12 @@ namespace Generator;
 /// </summary>
 public class Program {
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     static int Main() {
         try {
-
-
             // parse emoji.json into dictionary codepoint -> emoji
             var path = Path.GetFullPath("../../emoji.json");
             Console.WriteLine("Loading " + path);
@@ -191,7 +193,6 @@ public class Program {
         return 0;
     }
 
-
     /// <summary>
     /// Convert a unicode character to its code point/code pair(s)
     /// </summary>
@@ -208,7 +209,6 @@ public class Program {
         return codepoint.ToLower();
     }
 
-
     /// <summary>
     /// Converts a codepoint to unicode surrogate pairs
     /// </summary>
@@ -224,7 +224,6 @@ public class Program {
         return s2;
     }
 
-
     /// <summary>
     /// Converts unicode code point/code pair(s) to a unicode character.
     /// </summary>
@@ -234,7 +233,6 @@ public class Program {
         var bytes = AsUtf16Bytes(codepoint).ToArray();
         return Encoding.Unicode.GetString(bytes);
     }
-
 
     // Little Endian byte order
     public static IEnumerable<byte> AsUtf16Bytes(string codepoint) {
@@ -278,7 +276,6 @@ public class Program {
         throw new Exception("Unsupported code point: " + codepoint);
     }
 }
-
 
 record Emoji {
 
@@ -327,5 +324,3 @@ record CodePoints {
     public string[] BaseAndFullyQualified => Base == FullyQualified ? new string[] { Base } : new string[] { Base, FullyQualified };
 
 }
-
-

@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{041A21DE-FE29-49C2-9743-15B93E505D89}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmojiToolkit", "src\EmojiToolkit\EmojiToolkit.csproj", "{085FB1D1-70D7-4550-8F72-3AFA563523D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator", "src\Generator\Generator.csproj", "{E4FC2A4C-62B1-4440-B888-DC18D24A036D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{65D1FDF1-3D18-43EE-BF36-90F68A60CE2E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmojiToolkit.Tests", "test\EmojiToolkit.Tests\EmojiToolkit.Tests.csproj", "{471711D7-9446-4CAC-A2C6-C28DC40CF399}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F76B6B08-6317-424C-B2E9-83580C61E0AC}"
+	ProjectSection(SolutionItems) = preProject
+		emoji.json = emoji.json
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{085FB1D1-70D7-4550-8F72-3AFA563523D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085FB1D1-70D7-4550-8F72-3AFA563523D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085FB1D1-70D7-4550-8F72-3AFA563523D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085FB1D1-70D7-4550-8F72-3AFA563523D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4FC2A4C-62B1-4440-B888-DC18D24A036D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4FC2A4C-62B1-4440-B888-DC18D24A036D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4FC2A4C-62B1-4440-B888-DC18D24A036D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4FC2A4C-62B1-4440-B888-DC18D24A036D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{471711D7-9446-4CAC-A2C6-C28DC40CF399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{471711D7-9446-4CAC-A2C6-C28DC40CF399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{471711D7-9446-4CAC-A2C6-C28DC40CF399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{471711D7-9446-4CAC-A2C6-C28DC40CF399}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{085FB1D1-70D7-4550-8F72-3AFA563523D3} = {041A21DE-FE29-49C2-9743-15B93E505D89}
+		{E4FC2A4C-62B1-4440-B888-DC18D24A036D} = {041A21DE-FE29-49C2-9743-15B93E505D89}
+		{471711D7-9446-4CAC-A2C6-C28DC40CF399} = {65D1FDF1-3D18-43EE-BF36-90F68A60CE2E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46CFB284-03DE-4D4A-B143-A1327887D0EC}
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,8 @@
 # Emoji toolkit
 
+[![Build](https://github.com/lajjne/emoji-toolkit/actions/workflows/build.yml/badge.svg)](https://github.com/lajjne/emoji-toolkit/actions/workflows/build.yml)
+[![Nuget](https://img.shields.io/nuget/v/EmojiToolkit.svg?label=Nuget)](https://www.nuget.org/packages/EmojiToolkit)
+
 A C# toolkit for working with emoji.
 
 ## Usage

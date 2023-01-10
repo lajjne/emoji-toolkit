@@ -4,6 +4,7 @@
     <Authors>lajjne</Authors>
     <Copyright>Copyright © $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
     <Description>A C# toolkit for working with emoji.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>1f984.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>emoji</PackageTags>

@@ -1,12 +1,10 @@
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EmojiToolkit.Tests;
 
 [TestClass]
 public class EmojiTests {
-
 
     [TestMethod]
     public void All() {
@@ -37,7 +35,6 @@ public class EmojiTests {
         actual = Emoji.Asciify(text);
         Assert.AreEqual(expected, actual);
     }
-
 
     [TestMethod]
     public void Demojify() {
@@ -144,7 +141,6 @@ public class EmojiTests {
         Assert.AreEqual(":thumbsup_tone5:", shortcode);
     }
 
-
     [TestMethod]
     public void Emojify() {
         // shortname to unicode
@@ -196,8 +192,8 @@ public class EmojiTests {
         Assert.AreEqual(expected, actual);
 
         // triple emoji string
-        text = ":dancer::dancer::alien:";
-        expected = "💃💃👽";
+        text = ":blush::ok_hand::two_hearts:";
+        expected = "😊👌💕";
         actual = Emoji.Emojify(text);
         Assert.AreEqual(expected, actual);
 
@@ -227,7 +223,7 @@ public class EmojiTests {
 
         // shortname to unicode with code pairs
         text = ":nine:";
-        expected = "9⃣";
+        expected = "9️⃣";
         actual = Emoji.Emojify(text);
         Assert.AreEqual(expected, actual);
 
@@ -328,20 +324,25 @@ public class EmojiTests {
 
     [TestMethod]
     public void GetAlternate() {
-        var relaxed = Emoji.Get(":relaxed:");
-        var cp1 = relaxed.Codepoints[0]; // base code point
-        var cp2 = relaxed.Codepoints[1]; // fully qualified code point
+        var emoji = Emoji.Get(":relaxed:");
+        var cp1 = emoji.Codepoints[0]; // base code point
+        var cp2 = emoji.Codepoints[1]; // fully qualified code point
+        Assert.AreNotEqual(cp1, cp2);
+
         var raw1 = Emoji.FromCodePoint(cp1);
         var raw2 = Emoji.FromCodePoint(cp2);
         Assert.AreNotEqual(raw1, raw2);
 
+        // raw should not use base codepoint
         var e1 = Emoji.Get(raw1);
-        Assert.AreEqual(raw1, e1.Raw);
+        Assert.AreNotEqual(raw1, e1.Raw);
 
-        var e2 = Emoji.Get(raw2);
-        Assert.AreNotEqual(raw2, e2.Raw);
+        // raw should use fully qualified codepoint
+        var e2 = Emoji.Get(raw2);        
+        Assert.AreEqual(raw2, e2.Raw);
 
-        Assert.AreEqual(e1.Raw, e2.Raw);
+        // both codepoints should resolve to the same emoji
+        Assert.AreEqual(e1.Name, e2.Name);
     }
 
     [TestMethod]
@@ -509,7 +510,7 @@ public class EmojiTests {
         Assert.AreEqual(unicode, actual);
 
         var emoji = Emoji.Get(":family_mwgb:");
-        codepoint = emoji.Codepoints[0];
+        codepoint = emoji.Codepoints[1];
         actual = Emoji.FromCodePoint(codepoint);
         Assert.AreEqual(emoji.Raw, actual);
     }

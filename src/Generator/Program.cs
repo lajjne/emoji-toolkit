@@ -124,7 +124,7 @@ public class Program {
                     // new ("😃", "grinning face with big eyes", "people", new[] { "1f603" }, new[] { ":smiley:" }, new[] { ":-D", "=D" }, new[] { "face", "mouth", "open", "smile", "uc6" });
 
                     // raw, name, category
-                    sw.Write($@"        new (""{FromCodePoint(emoji.CodePoints.Base)}"", ""{emoji.Name}"", ""{emoji.Category}"", ");
+                    sw.Write($@"        new (""{FromCodePoint(emoji.CodePoints.FullyQualified)}"", ""{emoji.Name}"", ""{emoji.Category}"", ");
 
                     // codepoints
                     sw.Write($@"new [] {{ ""{emoji.CodePoints.Base}""");

@@ -71,13 +71,11 @@ public static partial class Emoji {
             return e1;
         }
 
-        // we expect value to be a single raw unicode emoji so we first perform a quick check on length
-        if (StringInfo.ParseCombiningCharacters(value).Length == 1) {
-            // lookup emoji from codepoint
-            var cp = ToCodePoint(value);
-            if (_pointToEmoji.TryGetValue(cp, out var e3)) {
-                return e3;
-            }
+        // lookup emoji from codepoint
+        // TODO: some kind of sanity check on length before converting to codepoint? 
+        var cp = ToCodePoint(value);
+        if (_pointToEmoji.TryGetValue(cp, out var e3)) {
+            return e3;
         }
 
         return null;

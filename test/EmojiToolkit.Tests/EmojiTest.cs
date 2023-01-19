@@ -384,9 +384,49 @@ public class EmojiTests {
         Assert.AreEqual(expected, actual);
 
         // triple emoji string
-        text = ":dancer::dancer::alien:";
-        expected = $@"<img class=""emoji"" alt=""💃"" title="":dancer:"" src=""/emoji/1f483.png"" /><img class=""emoji"" alt=""💃"" title="":dancer:"" src=""/emoji/1f483.png"" /><img class=""emoji"" alt=""👽"" title="":alien:"" src=""/emoji/1f47d.png"" />";
+        text = ":blush::ok_hand::two_hearts:";
+        expected = $@"<img class=""emoji"" alt=""😊"" title="":blush:"" src=""/emoji/1f60a.png"" /><img class=""emoji"" alt=""👌"" title="":ok_hand:"" src=""/emoji/1f44c.png"" /><img class=""emoji"" alt=""💕"" title="":two_hearts:"" src=""/emoji/1f495.png"" />";
         actual = Emoji.Imagify(text);
+        Assert.AreEqual(expected, actual);
+    }
+
+
+    [TestMethod]
+    public void Spanify() {
+        // mixed unicode, shortname and ascii
+        string text = "Hello 😄 :smile: world :D";
+        string expected = $@"Hello <span class=""emoji"" title="":smile:"">😄</span> <span class=""emoji"" title="":smile:"">😄</span> world <span class=""emoji"" title="":smile:"">😄</span>";
+        string actual = Emoji.Spanify(text, ascii: true);
+        Assert.AreEqual(expected, actual);
+
+        // shortname at start of sentence with apostrophe
+        text = ":snail:'s are cool!";
+        expected = $@"<span class=""emoji"" title="":snail:"">🐌</span>'s are cool!";
+        actual = Emoji.Spanify(text);
+        Assert.AreEqual(expected, actual);
+
+        // shortname shares a colon
+        text = ":invalid:snail:";
+        expected = $@":invalid<span class=""emoji"" title="":snail:"">🐌</span>";
+        actual = Emoji.Spanify(text);
+        Assert.AreEqual(expected, actual);
+
+        // mixed ascii, regular unicode and duplicate emoji
+        text = ":alien: is 👽 and 저 is not :alien: or :alien: also :randomy: is not emoji";
+        expected = """<span class="emoji" title=":alien:">👽</span> is <span class="emoji" title=":alien:">👽</span> and 저 is not <span class="emoji" title=":alien:">👽</span> or <span class="emoji" title=":alien:">👽</span> also :randomy: is not emoji""";
+        actual = Emoji.Spanify(text);
+        Assert.AreEqual(expected, actual);
+
+        // multiline emoji string
+        text = ":dancer:\n:dancer:";
+        expected = $"<span class=\"emoji\" title=\":dancer:\">💃</span>\n<span class=\"emoji\" title=\":dancer:\">💃</span>";
+        actual = Emoji.Spanify(text);
+        Assert.AreEqual(expected, actual);
+
+        // triple emoji string
+        text = ":blush::ok_hand::two_hearts:";
+        expected = $@"<span class=""emoji"" title="":blush:"">😊</span><span class=""emoji"" title="":ok_hand:"">👌</span><span class=""emoji"" title="":two_hearts:"">💕</span>";
+        actual = Emoji.Spanify(text);
         Assert.AreEqual(expected, actual);
     }
 
@@ -457,6 +497,10 @@ public class EmojiTests {
         var shortcode = Emoji.Shortcode("😃");
         Assert.AreEqual(":smiley:", shortcode);
 
+        // gets <span> tag for the specified emoji
+        var span = Emoji.Span(":wink:");
+        Assert.AreEqual("""<span class="emoji" title=":wink:">😉</span>""", span);
+
         // replaces emoji shortcodes and raw unicode strings with their ascii equivalents
         var asciified = Emoji.Asciify("😉 :wink:");
         Assert.AreEqual(";) ;)", asciified);
@@ -472,6 +516,10 @@ public class EmojiTests {
         // replaces emoji shortcodes and raw unicode strings with <img> tags
         var imagified = Emoji.Imagify("it's raining :cat:s and 🐶s!");
         Assert.AreEqual("""it's raining <img class="emoji" alt="🐱" title=":cat:" src="/emoji/1f431.png" />s and <img class="emoji" alt="🐶" title=":dog:" src="/emoji/1f436.png" />s!""", imagified);
+
+        // replaces emoji shortcodes and raw unicode strings with <span> tags
+        var spanified = Emoji.Spanify("it's raining :cat:s and 🐶s!");
+        Assert.AreEqual("""it's raining <span class="emoji" title=":cat:">🐱</span>s and <span class="emoji" title=":dog:">🐶</span>s!""", spanified);
 
         // returns emoji with matching name, category, shortcodes or tags
         var emoji = Emoji.Find("smile").First();

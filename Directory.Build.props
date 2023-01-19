@@ -2,6 +2,6 @@
   <PropertyGroup>
     <Authors>lajjne</Authors>
     <Copyright>Copyright © $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
-    <VersionPrefix>14.0.1</VersionPrefix>
+    <VersionPrefix>14.1.0</VersionPrefix>
   </PropertyGroup>
 </Project>

@@ -7,7 +7,7 @@ A C# toolkit for working with emoji.
 
 ## Usage
 
-The static `Emoji` class has methods for converting emoji into various formats, including conversion to html `<img>` tags.
+The static `Emoji` class has methods for converting emoji into various formats, including conversion to html.
 
 ```csharp
 // get an emoji by shortcode
@@ -28,6 +28,9 @@ Emoji.Raw(":smiley:"); // 😃
 // get the shortcode for a raw unicode string
 Emoji.Shortcode("😃"); // :smiley:
 
+// get <span> tag for the specified emoji
+Emoji.Span(":wink:"); // <span class="emoji" title=":wink:">😉</span>
+
 // replace emoji shortcodes and raw unicode strings with their ascii equivalents
 Emoji.Asciify("😉 :wink:"); // ;) ;)
 
@@ -40,6 +43,9 @@ Emoji.Demojify("it's raining 🐱s and 🐶s!"); // it's raining :cat:s and :dog
 // replace emoji shortcodes and raw unicode strings with <img> tags
 Emoji.Imagify("it's raining :cat:s and 🐶s!"); // it's raining <img class="emoji" alt="🐱" title=":cat:" src="/emoji/1f431.png" />s and <img class="emoji" alt="🐶" title=":dog:" src="/emoji/1f436.png" />s! 
 
+// replace emoji shortcodes and raw unicode strings with <span> tags
+Emoji.Spanify("it's raining :cat:s and 🐶s!"); // it's raining <span class="emoji" title=":cat:">🐱</span>s and <span class="emoji" title=":dog:">🐶</span>s! 
+
 // find emoji by name, category, shortcodes and tags
 Emoji.Find("smile").First().Raw; // 😃
 
@@ -50,7 +56,7 @@ Emoji.IsEmoji("it's raining 🐱s and 🐶s!"); // false
 
 ## Notes
 
-The full list of emoji is located in `Emoji.generated.cs` and was generated from [`emoji.json`](/emoji.json),
+The full list of emoji in `Emoji.generated.cs` was generated from [`emoji.json`](/emoji.json),
 which was originally downloaded from https://github.com/joypixels/emoji-toolkit/blob/master/emoji.json.
 
 To re-generate the file execute `dotnet run` from the  `\src\Generator` folder:
@@ -65,10 +71,3 @@ To re-generate the file execute `dotnet run` from the  `\src\Generator` folder:
 2. Commit and push the changes.
 3. [Create a release](https://github.com/lajjne/emoji-toolkit/releases/new) and tag it with the version number.
    This triggers [publish.yml](https://github.com/lajjne/emoji-toolkit/actions/workflows/publish.yml) which publishes a nuget package to https://www.nuget.org/.
-
-## Misc resources
-
-* https://unicode.org/emoji/techindex.html
-* https://unicode.org/emoji/charts/emoji-list.html
-* https://unicode.org/Public/emoji/14.0/
-* https://emojipedia.org/ 

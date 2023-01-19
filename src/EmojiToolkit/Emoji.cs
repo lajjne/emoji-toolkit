@@ -96,7 +96,7 @@ public static partial class Emoji {
     /// <param name="value">Emoji shortcode or raw unicode string.</param>
     /// <param name="path">Path (url) to image folder.</param>
     /// <param name="ext">Image file extension.</param>
-    /// <returns>The ascii equivalent of the emoji, or <c>null</c>.</returns>
+    /// <returns>An &lt;img&gt; tag for the emoji, or <c>null</c>.</returns>
     public static string Image(string value, string path = "/emoji/", string ext = ".png") {
         var emoji = Get(value);
         if (emoji != null) {
@@ -124,10 +124,23 @@ public static partial class Emoji {
     }
 
     /// <summary>
+    /// Gets &lt;span&gt; tag for the emoji with the specified shortcode or raw unicode string.
+    /// </summary>
+    /// <param name="value">Emoji shortcode or raw unicode string.</param>
+    /// <returns>A &lt;span&gt; tag for the emoji, or <c>null</c>.</returns>
+    public static string Span(string value) {
+        var emoji = Get(value);
+        if (emoji != null) {
+            return $@"<span class=""emoji"" title=""{emoji.Shortcodes[0]}"">{emoji.Raw}</span>";
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Replaces emoji shortcodes and raw unicode strings in <paramref name = "text" /> with their ascii equivalent, e.g. :wink: -> ;). 
     /// This is useful for systems that don't support unicode or images.
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="text">The text to asciify.</param>
     /// <returns>A string with ascii replacements.</returns>
     public static string Asciify(string text) {
         if (text != null) {
@@ -152,7 +165,6 @@ public static partial class Emoji {
     /// <param name="text">The text to emojify.</param>
     /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
     /// <returns>A string with emoji represented as raw unicode strings.</returns>
-    /// <example><code>Emoji.Emojify("it's raining :cat:s and :dog:s!"); // it's raining 🐱s and 🐶s!</code></example>
     public static string Emojify(string text, bool ascii = false) {
         if (text != null) {
             // first pass replaces shortcodes
@@ -180,7 +192,6 @@ public static partial class Emoji {
     /// <summary>
     /// Replaces raw unicode string in <paramref name="text"/> with emoji shortcodes.
     /// </summary>
-    /// <example><code>Emoji.Demojify("it's raining 🐱s and 🐶s!"); // it's raining :cat:s and :dog:s!</code></example>
     /// <param name="text">The text to demojify.</param>
     /// <returns>A string with emoji represented as emoji shortcodes.</returns>
     public static string Demojify(string text) {
@@ -196,11 +207,9 @@ public static partial class Emoji {
     /// <summary>
     /// Replaces emoji shortcodes and raw unicode strings in <paramref name="text"/> with &lt;img&gt; tags.
     /// </summary>
-    /// <param name="text">The text to demojify.</param>
+    /// <param name="text">The text to imagify.</param>
     /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
-    /// <returns>A string with emoji represented as &lt;img&gt; tags.</returns>
-    /// <example>
-    /// <code>Emoji.Imageify("it's raining 🐱s and 🐶s!"); // it's raining &lt;img class="emoji" alt="🐱" title=":cat:" src="/emoji/1f431.png" /&gt;s and &lt;img class="emoji" alt="🐶" title=":dog:" src="/emoji/1f436.png" /&gt;s!</code></example> 
+    /// <returns>A string with emoji represented as &lt;img&gt; tags.</returns>    
     public static string Imagify(string text, bool ascii = false, string path = "/emoji/", string ext = ".png") {
 
         if (text != null) {
@@ -211,6 +220,27 @@ public static partial class Emoji {
             text = RawRegex().Replace(text, match => {
                 // return image tag (or the entire match if we couldn't find a matching emoji)
                 return Image(match.Groups[1].Value, path, ext) ?? match.Value;
+            });
+        }
+        return text;
+    }
+
+    /// <summary>
+    /// Replaces emoji shortcodes and raw unicode strings in <paramref name="text"/> with &lt;span&gt; tags.
+    /// </summary>
+    /// <param name="text">The text to spanifu.</param>
+    /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
+    /// <returns>A string with emoji represented as &lt;span&gt; tags.</returns>    
+    public static string Spanify(string text, bool ascii = false) {
+
+        if (text != null) {
+            // first pass replaces shortcodes with raw unicode strings
+            text = Emojify(text, ascii);
+
+            // second pass replaces raw unicode strings with <span> tags
+            text = RawRegex().Replace(text, match => {
+                // return span tag (or the entire match if we couldn't find a matching emoji)
+                return Span(match.Groups[1].Value) ?? match.Value;
             });
         }
         return text;

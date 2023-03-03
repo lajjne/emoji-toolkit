@@ -13,6 +13,9 @@ The static `Emoji` class has methods for converting emoji into various formats, 
 // get an emoji by shortcode
 Emoji.Get(":smiley:").Raw; // 😃
 
+// get an emoji by ascii equivalent
+Emoji.Get(":-D").Raw; // 😃
+
 // get an emoji by raw unicode string
 Emoji.Get("😃").Name; // grinning face with big eyes
 
@@ -64,10 +67,3 @@ To re-generate the file execute `dotnet run` from the  `\src\Generator` folder:
 ```shell
 \src\Generator> dotnet run
 ```
-
-## Release checklist
-
-1. Update `VersionPrefix` in `Directory.build.props`.
-2. Commit and push the changes.
-3. [Create a release](https://github.com/lajjne/emoji-toolkit/releases/new) and tag it with the version number.
-   This triggers [publish.yml](https://github.com/lajjne/emoji-toolkit/actions/workflows/publish.yml) which publishes a nuget package to https://www.nuget.org/.

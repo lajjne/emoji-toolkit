@@ -346,9 +346,16 @@ public class EmojiTests {
     }
 
     [TestMethod]
+    public void GetAscii() {
+        var emoji = Emoji.Get(":D");
+        Assert.AreEqual("😄", emoji.Raw);
+    }
+
+    [TestMethod]
     public void Image() {
         Assert.AreEqual(@"<img class=""emoji"" alt=""🐌"" title="":snail:"" src=""/emoji/1f40c.png"" />", Emoji.Image(":snail:"));
         Assert.AreEqual(@"<img class=""emoji"" alt=""🐌"" title="":snail:"" src=""/e/1f40c.svg"" />", Emoji.Image("🐌", path: "/e/", ext: ".svg"));
+        Assert.AreEqual(@"<img class=""emo"" alt=""🐌"" title="":snail:"" src=""/e/1f40c.svg"" />", Emoji.Image("🐌", css: "emo", path: "/e/", ext: ".svg"));
     }
 
     [TestMethod]
@@ -475,6 +482,10 @@ public class EmojiTests {
     public void ReadmeTest() {
         // gets an emoji by shortcode
         var raw = Emoji.Get(":smiley:").Raw;
+        Assert.AreEqual("😃", raw);
+
+        //  get an emoji by ascii equivalent
+        raw = Emoji.Get(":-D").Raw;
         Assert.AreEqual("😃", raw);
 
         // gets an emoji by raw unicode string

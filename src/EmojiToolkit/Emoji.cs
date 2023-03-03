@@ -24,6 +24,11 @@ public static partial class Emoji {
     private static readonly Dictionary<string, EmojiRecord> _pointToEmoji = new();
     private static readonly Dictionary<string, EmojiRecord> _codeToEmoji = new();
 
+    // default settings for emoji images and spans
+    private const string DEFAULT_CLASS = "emoji";
+    private const string DEFAULT_PATH = "/emoji/";
+    private const string DEFAULT_EXT = ".png";
+
     // regular expression for matching ascii emoji
     [GeneratedRegex(IGNORE_PATTERN + @"|(?<=\s|^)(" + ASCII_PATTERN + @")(?=\s|$|[!,\.])")]
     private static partial Regex AsciiRegex();
@@ -61,7 +66,7 @@ public static partial class Emoji {
     /// <summary>
     /// Gets the emoji associated with the specified shortcode or raw unicode string.
     /// </summary>
-    /// <param name="value">Emoji shortcode or raw unicode string.</param>
+    /// <param name="value">Emoji shortcode, ascii emoji or raw unicode string.</param>
     /// <returns>The <see cref="Emoji"/>, or <c>null</c> if no match was found.</returns>
     public static EmojiRecord Get(string value) {
         ArgumentNullException.ThrowIfNull(value);
@@ -69,6 +74,11 @@ public static partial class Emoji {
         // short code?       
         if (value.StartsWith(':') && _codeToEmoji.TryGetValue(value, out var e1)) {
             return e1;
+        }
+
+        // ascii?
+        if (_asciiToEmoji.TryGetValue(value, out var e2)) {
+            return e2;
         }
 
         // lookup emoji from codepoint
@@ -94,13 +104,15 @@ public static partial class Emoji {
     /// Gets &lt;img&gt; tag for the emoji with the specified shortcode or raw unicode string.
     /// </summary>
     /// <param name="value">Emoji shortcode or raw unicode string.</param>
+    /// <param name="css">CSS class to apply.</param>
     /// <param name="path">Path (url) to image folder.</param>
     /// <param name="ext">Image file extension.</param>
     /// <returns>An &lt;img&gt; tag for the emoji, or <c>null</c>.</returns>
-    public static string Image(string value, string path = "/emoji/", string ext = ".png") {
+    public static string Image(string value, string css = null, string path = null, string ext = null) {
         var emoji = Get(value);
         if (emoji != null) {
-            return $@"<img class=""emoji"" alt=""{emoji.Raw}"" title=""{emoji.Shortcodes[0]}"" src=""{path}{emoji.Codepoints[0]}{ext}"" />";
+
+            return $@"<img class=""{css ?? DEFAULT_CLASS}"" alt=""{emoji.Raw}"" title=""{emoji.Shortcodes[0]}"" src=""{path ?? DEFAULT_PATH}{emoji.Codepoints[0]}{ext ?? DEFAULT_EXT}"" />";
         }
         return null;
     }
@@ -127,11 +139,12 @@ public static partial class Emoji {
     /// Gets &lt;span&gt; tag for the emoji with the specified shortcode or raw unicode string.
     /// </summary>
     /// <param name="value">Emoji shortcode or raw unicode string.</param>
+    /// <param name="css">CSS class to apply.</param>
     /// <returns>A &lt;span&gt; tag for the emoji, or <c>null</c>.</returns>
-    public static string Span(string value) {
+    public static string Span(string value, string css = null) {
         var emoji = Get(value);
         if (emoji != null) {
-            return $@"<span class=""emoji"" title=""{emoji.Shortcodes[0]}"">{emoji.Raw}</span>";
+            return $@"<span class=""{css ?? DEFAULT_CLASS}"" title=""{emoji.Shortcodes[0]}"">{emoji.Raw}</span>";
         }
         return null;
     }
@@ -209,8 +222,11 @@ public static partial class Emoji {
     /// </summary>
     /// <param name="text">The text to imagify.</param>
     /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
+    /// <param name="css">CSS class to apply.</param>
+    /// <param name="path">Path (url) to image folder.</param>
+    /// <param name="ext">Image file extension.</param>
     /// <returns>A string with emoji represented as &lt;img&gt; tags.</returns>    
-    public static string Imagify(string text, bool ascii = false, string path = "/emoji/", string ext = ".png") {
+    public static string Imagify(string text, bool ascii = false, string css = null, string path = null, string ext = null) {
 
         if (text != null) {
             // first pass replaces shortcodes with raw unicode strings
@@ -219,7 +235,7 @@ public static partial class Emoji {
             // second pass replaces raw unicode strings with <img> tags
             text = RawRegex().Replace(text, match => {
                 // return image tag (or the entire match if we couldn't find a matching emoji)
-                return Image(match.Groups[1].Value, path, ext) ?? match.Value;
+                return Image(match.Groups[1].Value, css, path, ext) ?? match.Value;
             });
         }
         return text;
@@ -230,8 +246,9 @@ public static partial class Emoji {
     /// </summary>
     /// <param name="text">The text to spanifu.</param>
     /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
+    /// <param name="css">CSS class to apply.</param>
     /// <returns>A string with emoji represented as &lt;span&gt; tags.</returns>    
-    public static string Spanify(string text, bool ascii = false) {
+    public static string Spanify(string text, bool ascii = false, string css = null) {
 
         if (text != null) {
             // first pass replaces shortcodes with raw unicode strings
@@ -240,7 +257,7 @@ public static partial class Emoji {
             // second pass replaces raw unicode strings with <span> tags
             text = RawRegex().Replace(text, match => {
                 // return span tag (or the entire match if we couldn't find a matching emoji)
-                return Span(match.Groups[1].Value) ?? match.Value;
+                return Span(match.Groups[1].Value, css) ?? match.Value;
             });
         }
         return text;

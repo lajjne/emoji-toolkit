@@ -56,14 +56,3 @@ Emoji.Find("smile").First().Raw; // 😃
 Emoji.IsEmoji("🐱🐶"); // true
 Emoji.IsEmoji("it's raining 🐱s and 🐶s!"); // false
 ```
-
-## Notes
-
-The full list of emoji in `Emoji.generated.cs` was generated from [`emoji.json`](/emoji.json),
-which was originally downloaded from https://github.com/joypixels/emoji-toolkit/blob/master/emoji.json.
-
-To re-generate the file execute `dotnet run` from the  `\src\Generator` folder:
-
-```shell
-\src\Generator> dotnet run
-```

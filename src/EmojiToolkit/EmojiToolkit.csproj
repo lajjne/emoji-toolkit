@@ -8,6 +8,7 @@
     <PackageTags>emoji</PackageTags>
     <RepositoryUrl>https://github.com/lajjne/emoji-toolkit</RepositoryUrl>
     <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

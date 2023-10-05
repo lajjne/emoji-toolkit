@@ -365,9 +365,19 @@ public static partial class Emoji {
     }
 
     /// <summary>
-    /// Convert a raw unicode string to its code point/code pair(s).
+    /// Converts a hex code point/code pair(s) to a raw unicode string.
     /// </summary>
-    /// <param name="raw"></param>
+    /// <param name="codepoint">Hex encoded code point or code pair(s).</param>
+    /// <returns>A unicode string.</returns>
+    public static string FromCodePoint(string codepoint) {
+        var bytes = EnumerateBytes(codepoint).ToArray();
+        return Encoding.Unicode.GetString(bytes);
+    }
+
+    /// <summary>
+    /// Convert a raw unicode string to its hex code point/code pair(s).
+    /// </summary>
+    /// <param name="raw">A unicode string.</param>
     /// <returns></returns>
     internal static string ToCodePoint(string raw) {
         var codepoint = "";
@@ -381,13 +391,17 @@ public static partial class Emoji {
     }
 
     /// <summary>
-    /// Converts unicode code point/code pair(s) to a raw unicode string.
+    /// Converts a hex code point/code pair(s) to UTF16 surrogate pair(s).
     /// </summary>
-    /// <param name="codepoint"></param>
-    /// <returns>A unicode string.</returns>
-    internal static string FromCodePoint(string codepoint) {
-        var bytes = EnumerateBytes(codepoint).ToArray();
-        return Encoding.Unicode.GetString(bytes);
+    /// <param name="codepoint">Hex encoded code point or code pair(s).</param>
+    /// <returns></returns>
+    internal static string ToSurrogate(string codepoint) {
+        var raw = FromCodePoint(codepoint);
+        var s2 = "";
+        for (var x = 0; x < raw.Length; x++) {
+            s2 += string.Format("\\u{0:x4}", (int)raw[x]);
+        }
+        return s2;
     }
 
     /// <summary>
@@ -396,7 +410,7 @@ public static partial class Emoji {
     /// <param name="codepoint"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    internal static IEnumerable<byte> EnumerateBytes(string codepoint) {
+    private static IEnumerable<byte> EnumerateBytes(string codepoint) {
         var codepoints = Array.ConvertAll(codepoint.Split('-'), (i) => uint.Parse(i, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat));
         foreach (var cp in codepoints) {
             foreach (var b in EnumerateBytes(cp)) {
@@ -411,7 +425,7 @@ public static partial class Emoji {
     /// <param name="codepoint"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    internal static IEnumerable<byte> EnumerateBytes(uint codepoint) {
+    private static IEnumerable<byte> EnumerateBytes(uint codepoint) {
         if (codepoint <= 0xFFFF) {
             // U+0000 to U+D7FF and U+E000 to U+FFFF
             yield return (byte)(codepoint);
@@ -431,19 +445,7 @@ public static partial class Emoji {
         }
     }
 
-    /// <summary>
-    /// Converts HEX codepoint(s) to UTF16 surrogate pair(s).
-    /// </summary>
-    /// <param name="codepoint"></param>
-    /// <returns></returns>
-    internal static string ToSurrogate(string codepoint) {
-        var raw = FromCodePoint(codepoint);
-        var s2 = "";
-        for (var x = 0; x < raw.Length; x++) {
-            s2 += string.Format("\\u{0:x4}", (int)raw[x]);
-        }
-        return s2;
-    }
+
 }
 
 /// <summary>

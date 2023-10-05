@@ -24,12 +24,12 @@ public class Program {
             var path = Path.GetFullPath("../../emoji.json");
             Console.WriteLine("Loading " + path);
 
-            string json = File.ReadAllText(path);
+            var json = File.ReadAllText(path);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, Emoji>>(json);
 
             // remove ascii symbols and digits
-            string chars = "0123456789#*";
-            foreach (char c in chars) {
+            var chars = "0123456789#*";
+            foreach (var c in chars) {
                 var codepoint = ToCodePoint(c.ToString());
                 dict.Remove(codepoint);
             }
@@ -50,9 +50,9 @@ public class Program {
                         /// </summary>
                     """);
                 sw.Write(@"    private const string ASCII_PATTERN = @""");
-                for (int i = 0; i < asciis.Count(); i++) {
+                for (var i = 0; i < asciis.Count(); i++) {
                     var emoji = asciis.ElementAt(i);
-                    for (int j = 0; j < emoji.Ascii.Length; j++) {
+                    for (var j = 0; j < emoji.Ascii.Length; j++) {
                         sw.Write(Regex.Escape(emoji.Ascii[j]));
                         if (j < emoji.Ascii.Length - 1) {
                             sw.Write("|");
@@ -81,7 +81,7 @@ public class Program {
                 sw.Write(@"    private const string RAW_PATTERN = @""");
                 // NOTE: these must be ordered by length of the unicode code point
                 var codepoints = dict.Values.SelectMany(e => e.CodePoints.BaseAndFullyQualified).OrderByDescending(cp => cp.Length).ToList();
-                for (int i = 0; i < codepoints.Count; i++) {
+                for (var i = 0; i < codepoints.Count; i++) {
                     var cp = codepoints.ElementAt(i);
                     sw.Write(ToSurrogateString(cp));
                     if (i < codepoints.Count - 1) {
@@ -97,13 +97,13 @@ public class Program {
                         /// </summary>
                     """);
                 sw.Write(@"    private const string SHORT_PATTERN = @""");
-                for (int i = 0; i < dict.Count; i++) {
+                for (var i = 0; i < dict.Count; i++) {
                     var emoji = dict.ElementAt(i).Value;
                     if (i > 0) {
                         sw.Write("|");
                     }
                     sw.Write(Regex.Escape(emoji.Shortname));
-                    for (int j = 0; j < emoji.ShortnameAlternates.Length; j++) {
+                    for (var j = 0; j < emoji.ShortnameAlternates.Length; j++) {
                         sw.Write("|");
                         sw.Write(Regex.Escape(emoji.ShortnameAlternates[j]));
                     }
@@ -118,7 +118,7 @@ public class Program {
                     """);
                 sw.WriteLine(@"    public static readonly EmojiRecord[] All = new EmojiRecord[] {");
 
-                for (int i = 0; i < dict.Count; i++) {
+                for (var i = 0; i < dict.Count; i++) {
                     var emoji = dict.ElementAt(i).Value;
 
                     // new ("😃", "grinning face with big eyes", "people", new[] { "1f603" }, new[] { ":smiley:" }, new[] { ":-D", "=D" }, new[] { "face", "mouth", "open", "smile", "uc6" });
@@ -143,7 +143,7 @@ public class Program {
                     // ascii
                     if (emoji.Ascii.Any()) {
                         sw.Write($@"new [] {{ ");
-                        for (int j = 0; j < emoji.Ascii.Length; j++) {
+                        for (var j = 0; j < emoji.Ascii.Length; j++) {
                             var ascii = emoji.Ascii[j].Replace("\"", "\\\"").Replace("\\", "\\\\");
                             if (j > 0) {
                                 sw.Write(", ");
@@ -160,7 +160,7 @@ public class Program {
 
                     if (tags.Any()) {
                         sw.Write($@"new [] {{ ");
-                        for (int j = 0; j < tags.Length; j++) {
+                        for (var j = 0; j < tags.Length; j++) {
                             var tag = tags[j];
                             if (j > 0) {
                                 sw.Write(", ");
@@ -199,7 +199,7 @@ public class Program {
     /// <param name="unicode"></param>
     /// <returns></returns>
     private static string ToCodePoint(string unicode) {
-        string codepoint = "";
+        var codepoint = "";
         for (var i = 0; i < unicode.Length; i += char.IsSurrogatePair(unicode, i) ? 2 : 1) {
             if (i > 0) {
                 codepoint += "-";
@@ -217,8 +217,8 @@ public class Program {
     private static string ToSurrogateString(string codepoint) {
         var unicode = FromCodePoint(codepoint);
 
-        string s2 = "";
-        for (int x = 0; x < unicode.Length; x++) {
+        var s2 = "";
+        for (var x = 0; x < unicode.Length; x++) {
             s2 += string.Format("\\u{0:x4}", (int)unicode[x]);
         }
         return s2;
@@ -240,7 +240,7 @@ public class Program {
         var bytes = new byte[4];
         foreach (var cp in _codepoints) {
             var count = AsUtf16Bytes(cp, bytes);
-            for (int i = 0; i < count; ++i) {
+            for (var i = 0; i < count; ++i) {
                 yield return bytes[i];
             }
         }
@@ -260,13 +260,13 @@ public class Program {
 
         // U+10000 to U+10FFFF
         if (codepoint >= 0x10000 && codepoint <= 0x10FFFF) {
-            uint newVal = codepoint - 0x010000; // leaving 20 bits
-            ushort high = (UInt16)((newVal >> 10) + 0xD800);
+            var newVal = codepoint - 0x010000; // leaving 20 bits
+            var high = (UInt16)((newVal >> 10) + 0xD800);
             //System.Diagnostics.Debug.Assert(high <= 0xDBFF && high >= 0xD800);
             dest[0] = (byte)(high);
             dest[1] = (byte)(high >> 8);
 
-            ushort low = (UInt16)((newVal & 0x03FF) + 0xDC00);
+            var low = (UInt16)((newVal & 0x03FF) + 0xDC00);
             //System.Diagnostics.Debug.Assert(low <= 0xDFFF && low >= 0xDC00);
             dest[2] = (byte)(low);
             dest[3] = (byte)(low >> 8);

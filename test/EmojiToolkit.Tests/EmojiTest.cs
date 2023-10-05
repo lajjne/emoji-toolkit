@@ -20,9 +20,9 @@ public class EmojiTests {
 
     [TestMethod]
     public void Asciify() {
-        string text = ":poop: :slight_smile: 🍺 😄";
-        string expected = ":poop: :) 🍺 :D";
-        string actual = Emoji.Asciify(text);
+        var text = ":poop: :slight_smile: 🍺 😄";
+        var expected = ":poop: :) 🍺 :D";
+        var actual = Emoji.Asciify(text);
         Assert.AreEqual(expected, actual);
 
         text = "poop:)";
@@ -39,9 +39,9 @@ public class EmojiTests {
     [TestMethod]
     public void Demojify() {
         // to short
-        string text = "Hello world! 😄 :smile:";
-        string expected = "Hello world! :smile: :smile:";
-        string actual = Emoji.Demojify(text);
+        var text = "Hello world! 😄 :smile:";
+        var expected = "Hello world! :smile: :smile:";
+        var actual = Emoji.Demojify(text);
         Assert.AreEqual(expected, actual);
 
         // single unicode character conversion
@@ -131,7 +131,7 @@ public class EmojiTests {
 
     [TestMethod]
     public void DiversityShortcodes() {
-        string shortcode = Emoji.Shortcode("👍");
+        var shortcode = Emoji.Shortcode("👍");
         Assert.AreEqual(":thumbsup:", shortcode);
 
         shortcode = Emoji.Shortcode("👍🏻");
@@ -144,9 +144,9 @@ public class EmojiTests {
     [TestMethod]
     public void Emojify() {
         // shortname to unicode
-        string text = "Hello world! 😄 :smile:";
-        string expected = "Hello world! 😄 😄";
-        string actual = Emoji.Emojify(text);
+        var text = "Hello world! 😄 :smile:";
+        var expected = "Hello world! 😄 😄";
+        var actual = Emoji.Emojify(text);
         Assert.AreEqual(expected, actual);
 
         // single shortname
@@ -237,9 +237,9 @@ public class EmojiTests {
     [TestMethod]
     public void EmojifyAscii() {
         // single smiley
-        string text = ":D";
-        string expected = "😄";
-        string actual = Emoji.Emojify(text, ascii: true);
+        var text = ":D";
+        var expected = "😄";
+        var actual = Emoji.Emojify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
         // single smiley with incorrect case (shouldn't convert)
@@ -361,9 +361,9 @@ public class EmojiTests {
     [TestMethod]
     public void Imagify() {
         // mixed unicode, shortname and ascii
-        string text = "Hello 😄 :smile: world :D";
-        string expected = $@"Hello <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> world <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" />";
-        string actual = Emoji.Imagify(text, ascii: true);
+        var text = "Hello 😄 :smile: world :D";
+        var expected = $@"Hello <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> world <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" />";
+        var actual = Emoji.Imagify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
         // shortname at start of sentence with apostrophe
@@ -401,9 +401,9 @@ public class EmojiTests {
     [TestMethod]
     public void Spanify() {
         // mixed unicode, shortname and ascii
-        string text = "Hello 😄 :smile: world :D";
-        string expected = $@"Hello <span class=""emoji"" title="":smile:"">😄</span> <span class=""emoji"" title="":smile:"">😄</span> world <span class=""emoji"" title="":smile:"">😄</span>";
-        string actual = Emoji.Spanify(text, ascii: true);
+        var text = "Hello 😄 :smile: world :D";
+        var expected = $@"Hello <span class=""emoji"" title="":smile:"">😄</span> <span class=""emoji"" title="":smile:"">😄</span> world <span class=""emoji"" title="":smile:"">😄</span>";
+        var actual = Emoji.Spanify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
         // shortname at start of sentence with apostrophe
@@ -543,16 +543,16 @@ public class EmojiTests {
 
     [TestMethod]
     public void SymbolsAndDigitsAreNotEmoji() {
-        string text = @" !""#$%&'()*+,-./0123456789:;<=>?@";
-        string actual = Emoji.Demojify(text);
+        var text = @" !""#$%&'()*+,-./0123456789:;<=>?@";
+        var actual = Emoji.Demojify(text);
         Assert.AreEqual(text, actual);
     }
 
     [TestMethod]
     public void ToCodepoint() {
         // :grinning:
-        string unicode = "😀";
-        string codepoint = Emoji.ToCodePoint(unicode);
+        var unicode = "😀";
+        var codepoint = Emoji.ToCodePoint(unicode);
         Assert.AreEqual("1f600", codepoint);
 
         var actual = Emoji.FromCodePoint(codepoint);
@@ -616,15 +616,15 @@ public class EmojiTests {
     [TestMethod]
     public void ZWJSequence() {
         // :family: is a not a ZWJ sequence
-        string raw = "👪";
+        var raw = "👪";
 
-        string codepoint = Emoji.ToCodePoint(raw);
+        var codepoint = Emoji.ToCodePoint(raw);
         Assert.AreEqual("1f46a", codepoint);
 
-        string shortcode = Emoji.Shortcode(raw);
+        var shortcode = Emoji.Shortcode(raw);
         Assert.AreEqual(":family:", shortcode);
 
-        // :family_mwgb: is a ZWJ sequence combining :man: (🤷), :woman:, :girl: and :boy:
+        // :family_mwgb: is a ZWJ sequence combining :man:, :woman:, :girl: and :boy:
         raw = "👨‍👩‍👧‍👦";
         codepoint = Emoji.ToCodePoint(raw);
         Assert.AreEqual("1f468-200d-1f469-200d-1f467-200d-1f466", codepoint);
@@ -642,7 +642,7 @@ public class EmojiTests {
         Assert.AreNotEqual(":person_shrugging:‍:male_sign:", shortcode);
         Assert.AreEqual(":man_shrugging:", shortcode);
 
-        string surrogate = Emoji.ToSurrogate(codepoint);
+        var surrogate = Emoji.ToSurrogate(codepoint);
         Assert.AreNotEqual(@"\ud83e\udd37", surrogate);
         Assert.AreEqual(@"\ud83e\udd37\u200d\u2642\ufe0f", surrogate);
     }

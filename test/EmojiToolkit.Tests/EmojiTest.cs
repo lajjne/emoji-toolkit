@@ -8,7 +8,7 @@ public class EmojiTests {
 
     [TestMethod]
     public void All() {
-        Assert.AreEqual(3659, Emoji.All.Length);
+        Assert.AreEqual(3690, Emoji.All.Length);
     }
 
     [TestMethod]

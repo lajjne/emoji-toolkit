@@ -600,6 +600,20 @@ public class EmojiTests {
     }
 
     [TestMethod]
+    public void Version15Emoji() {
+        Assert.AreEqual(31, Emoji.All.Count(e => e.Version == "15"));
+        Assert.IsNotNull(Emoji.Get(":shaking_face:"));
+    }
+
+    // Enable when emoji.json is pdated to 15.1
+    //[TestMethod]
+    //public void Version151Emoji() {
+    //    Assert.IsNotNull(Emoji.Get(":lime:"));
+    //    Assert.IsNotNull(Emoji.Get(":phoenix:"));
+    //    Assert.AreEqual(118, Emoji.All.Count(e => e.Version == "15.1"));
+    //}
+
+    [TestMethod]
     public void ZWJSequence() {
         // :family: is a not a ZWJ sequence
         string raw = "👪";

@@ -450,9 +450,9 @@ public static partial class Emoji {
 /// Represents an emoji.
 /// </summary>
 /// <param name="Raw">Raw unicode <c>string</c> of the emoji.</param>
-/// <param name="Name">The emoji name according to http://unicode.org/Public/emoji/11.0/emoji-test.txt.</param>
+/// <param name="Name">The emoji name according to http://unicode.org/Public/emoji/15.0/emoji-test.txt.</param>
 /// <param name="Category">Emoji category.</param>
-/// <param name="Codepoints">Code points according to http://unicode.org/Public/emoji/11.0/emoji-test.txt.</param>
+/// <param name="Codepoints">Code points according to http://unicode.org/Public/emoji/15.0/emoji-test.txt.</param>
 /// <param name="Shortcodes">A list of names (colon-encapsulated, snake_cased) uniquely referring to the emoji.</param>
 /// <param name="Ascii">Ascii representations of the emoji.</param>
 /// <param name="Tags">A list of tags/keywords associated with the emoji. Multiple emoji can share the same tags.</param>

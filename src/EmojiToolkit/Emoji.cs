@@ -20,9 +20,9 @@ public static partial class Emoji {
     private const string SKIN_TONES = "🏻🏼🏽🏾🏿"; // light, medium-light, medium, medium-dark, dark
 
     // lookup tables for emoji
-    private static readonly Dictionary<string, EmojiRecord> _asciiToEmoji = new();
-    private static readonly Dictionary<string, EmojiRecord> _pointToEmoji = new();
-    private static readonly Dictionary<string, EmojiRecord> _codeToEmoji = new();
+    private static readonly Dictionary<string, EmojiRecord> _asciiToEmoji = [];
+    private static readonly Dictionary<string, EmojiRecord> _pointToEmoji = [];
+    private static readonly Dictionary<string, EmojiRecord> _codeToEmoji = [];
 
     // default settings for emoji images and spans
     private const string DEFAULT_CLASS = "emoji";
@@ -459,4 +459,4 @@ public static partial class Emoji {
 /// <param name="Ascii">Ascii representations of the emoji.</param>
 /// <param name="Tags">A list of tags/keywords associated with the emoji. Multiple emoji can share the same tags.</param>
 /// <param name="Version">Unicode version when the emoji was added.</param>
-public record EmojiRecord(string Raw, string Name, string Category, string[] Codepoints, string[] Shortcodes, string[] Ascii, string[] Tags, string Version);
+public record EmojiRecord(string Raw, string Name, string Category, string[] Codepoints, string[] Shortcodes, string[] Ascii, string[] Tags, double Version);

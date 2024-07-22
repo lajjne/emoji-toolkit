@@ -588,20 +588,20 @@ public class EmojiTests {
 
     [TestMethod]
     public void Version13Emoji() {
-        Assert.AreEqual(117, Emoji.All.Count(e => e.Version == "13"));
+        Assert.AreEqual(117, Emoji.All.Count(e => e.Version == 13));
         var emoji = Emoji.Get("🥲");
         Assert.AreEqual(":smiling_face_with_tear:", emoji.Shortcodes[0]);
     }
 
     [TestMethod]
     public void Version14Emoji() {
-        Assert.AreEqual(112, Emoji.All.Count(e => e.Version == "14"));
+        Assert.AreEqual(112, Emoji.All.Count(e => e.Version == 14));
         Assert.IsNotNull(Emoji.Get(":melting_face:"));
     }
 
     [TestMethod]
     public void Version15Emoji() {
-        Assert.AreEqual(31, Emoji.All.Count(e => e.Version == "15"));
+        Assert.AreEqual(31, Emoji.All.Count(e => e.Version == 15));
         Assert.IsNotNull(Emoji.Get(":shaking_face:"));
     }
 
@@ -609,7 +609,7 @@ public class EmojiTests {
     public void Version151Emoji() {
         Assert.IsNotNull(Emoji.Get(":lime:"));
         Assert.IsNotNull(Emoji.Get(":phoenix:"));
-        Assert.AreEqual(118, Emoji.All.Count(e => e.Version == "15.1"));
+        Assert.AreEqual(118, Emoji.All.Count(e => e.Version == 15.1));
     }
 
     [TestMethod]

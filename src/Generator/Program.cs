@@ -1,10 +1,11 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Generator;
@@ -12,20 +13,23 @@ namespace Generator;
 /// <summary>
 /// Generates Emoji.generated.cs from emoji.json
 /// </summary>
-public class Program {
+public partial class Program {
+
+    [GeneratedRegex(@"uc\d+")]
+    private static partial Regex VersionTagRegex();
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    static int Main() {
+    static int Main(string[] args) {
         try {
             // parse emoji.json into dictionary codepoint -> emoji
-            var path = Path.GetFullPath("../../emoji.json");
+            var path = Path.GetFullPath(args.Length == 1 ? args[0] : "../../emoji.json");
             Console.WriteLine("Loading " + path);
 
             var json = File.ReadAllText(path);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, Emoji>>(json);
+            var dict = JsonSerializer.Deserialize<Dictionary<string, Emoji>>(json);
 
             // remove ascii symbols and digits
             var chars = "0123456789#*";
@@ -43,7 +47,7 @@ public class Program {
                 sw.WriteLine(@"public static partial class Emoji {");
                 sw.WriteLine();
 
-                var asciis = dict.Values.Where(x => x.Ascii.Any());
+                var asciis = dict.Values.Where(x => x.Ascii.Length != 0);
                 sw.WriteLine("""
                         /// <summary>
                         /// Regular expression pattern to match ascii emoji.
@@ -141,7 +145,7 @@ public class Program {
                     sw.Write(" }, ");
 
                     // ascii
-                    if (emoji.Ascii.Any()) {
+                    if (emoji.Ascii.Length != 0) {
                         sw.Write($@"new [] {{ ");
                         for (var j = 0; j < emoji.Ascii.Length; j++) {
                             var ascii = emoji.Ascii[j].Replace("\"", "\\\"").Replace("\\", "\\\\");
@@ -156,9 +160,9 @@ public class Program {
                     }
 
                     // tags
-                    var tags = emoji.Keywords.Where(t => !Regex.IsMatch(t, @"uc\d+")).ToArray();
+                    var tags = emoji.Keywords.Where(t => !VersionTagRegex().IsMatch(t)).ToArray();
 
-                    if (tags.Any()) {
+                    if (tags.Length != 0) {
                         sw.Write($@"new [] {{ ");
                         for (var j = 0; j < tags.Length; j++) {
                             var tag = tags[j];
@@ -173,7 +177,7 @@ public class Program {
                     }
 
                     // version
-                    sw.Write($@", ""{emoji.Version}"")");
+                    sw.Write($@", {emoji.Version.ToString("G", CultureInfo.InvariantCulture)})");
 
                     if (i < dict.Count - 1) {
                         sw.WriteLine(",");
@@ -236,7 +240,7 @@ public class Program {
 
     // Little Endian byte order
     public static IEnumerable<byte> AsUtf16Bytes(string codepoint) {
-        var _codepoints = codepoint.Split('-').Select(x => UInt32.Parse(x, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat));
+        var _codepoints = codepoint.Split('-').Select(x => uint.Parse(x, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat));
         var bytes = new byte[4];
         foreach (var cp in _codepoints) {
             var count = AsUtf16Bytes(cp, bytes);
@@ -261,12 +265,12 @@ public class Program {
         // U+10000 to U+10FFFF
         if (codepoint >= 0x10000 && codepoint <= 0x10FFFF) {
             var newVal = codepoint - 0x010000; // leaving 20 bits
-            var high = (UInt16)((newVal >> 10) + 0xD800);
+            var high = (ushort)((newVal >> 10) + 0xD800);
             //System.Diagnostics.Debug.Assert(high <= 0xDBFF && high >= 0xD800);
             dest[0] = (byte)(high);
             dest[1] = (byte)(high >> 8);
 
-            var low = (UInt16)((newVal & 0x03FF) + 0xDC00);
+            var low = (ushort)((newVal & 0x03FF) + 0xDC00);
             //System.Diagnostics.Debug.Assert(low <= 0xDFFF && low >= 0xDC00);
             dest[2] = (byte)(low);
             dest[3] = (byte)(low >> 8);
@@ -275,33 +279,34 @@ public class Program {
 
         throw new Exception("Unsupported code point: " + codepoint);
     }
+
 }
 
 record Emoji {
 
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonProperty("category")]
+    [JsonPropertyName("category")]
     public string Category { get; set; }
 
-    [JsonProperty("shortname")]
+    [JsonPropertyName("shortname")]
     public string Shortname { get; set; }
 
-    [JsonProperty("shortname_alternates")]
-    public string[] ShortnameAlternates { get; set; } = Array.Empty<string>();
+    [JsonPropertyName("shortname_alternates")]
+    public string[] ShortnameAlternates { get; set; } = [];
 
-    [JsonProperty("ascii")]
-    public string[] Ascii { get; set; } = Array.Empty<string>();
+    [JsonPropertyName("ascii")]
+    public string[] Ascii { get; set; } = [];
 
-    [JsonProperty("code_points")]
+    [JsonPropertyName("code_points")]
     public CodePoints CodePoints { get; set; }
 
-    [JsonProperty("keywords")]
-    public string[] Keywords { get; set; } = Array.Empty<string>();
+    [JsonPropertyName("keywords")]
+    public string[] Keywords { get; set; } = [];
 
-    [JsonProperty("unicode_version")]
-    public string Version { get; set; }
+    [JsonPropertyName("unicode_version")]
+    public double Version { get; set; }
 }
 
 record CodePoints {
@@ -309,18 +314,18 @@ record CodePoints {
     /// <summary>
     /// Full unicode code point minus VS16 and ZWJ.
     /// </summary>
-    [JsonProperty("base")]
+    [JsonPropertyName("base")]
     public string Base { get; set; }
 
     /// <summary>
     /// Fully qualified code point according to http://unicode.org/Public/emoji/11.0/emoji-test.txt.
     /// </summary>
-    [JsonProperty("fully_qualified")]
+    [JsonPropertyName("fully_qualified")]
     public string FullyQualified { get; set; }
 
     /// <summary>
     /// Combination of <see cref="Base"/> and <see cref="FullyQualified"/> codepoints used to identify native unicode.
     /// </summary>
-    public string[] BaseAndFullyQualified => Base == FullyQualified ? new string[] { Base } : new string[] { Base, FullyQualified };
+    public string[] BaseAndFullyQualified => Base == FullyQualified ? [Base] : [Base, FullyQualified];
 
 }

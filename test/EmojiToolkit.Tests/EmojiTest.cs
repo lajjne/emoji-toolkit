@@ -8,7 +8,7 @@ public class EmojiTests {
 
     [TestMethod]
     public void All() {
-        Assert.AreEqual(3690, Emoji.All.Length);
+        Assert.AreEqual(3808, Emoji.All.Length);
     }
 
     [TestMethod]
@@ -605,13 +605,12 @@ public class EmojiTests {
         Assert.IsNotNull(Emoji.Get(":shaking_face:"));
     }
 
-    // Enable when emoji.json is pdated to 15.1
-    //[TestMethod]
-    //public void Version151Emoji() {
-    //    Assert.IsNotNull(Emoji.Get(":lime:"));
-    //    Assert.IsNotNull(Emoji.Get(":phoenix:"));
-    //    Assert.AreEqual(118, Emoji.All.Count(e => e.Version == "15.1"));
-    //}
+    [TestMethod]
+    public void Version151Emoji() {
+        Assert.IsNotNull(Emoji.Get(":lime:"));
+        Assert.IsNotNull(Emoji.Get(":phoenix:"));
+        Assert.AreEqual(118, Emoji.All.Count(e => e.Version == "15.1"));
+    }
 
     [TestMethod]
     public void ZWJSequence() {

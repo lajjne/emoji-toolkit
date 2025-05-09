@@ -454,7 +454,8 @@ public class EmojiTests {
 
         // skintones
         Assert.IsTrue(Emoji.IsEmoji("👍🏻"));
-        Assert.IsTrue(Emoji.IsEmoji("👍🏻", 1));
+        Assert.IsTrue(Emoji.IsEmoji("👍🏿", 1));
+        Assert.IsTrue(Emoji.IsEmoji("👍🏻👍🏿", 2));
 
         // no emoji
         Assert.IsFalse(Emoji.IsEmoji("ab c"));
@@ -476,6 +477,18 @@ public class EmojiTests {
 
         // whitespace is allowed
         Assert.IsTrue(Emoji.IsEmoji("😀 😀"));
+
+        // RGI flags are emoji
+        Assert.IsTrue(Emoji.IsEmoji("🇸🇪"));
+        Assert.IsTrue(Emoji.IsEmoji("🇬🇧"));
+        Assert.IsTrue(Emoji.IsEmoji("🏴󠁧󠁢󠁥󠁮󠁧󠁿")); // England 
+        Assert.IsTrue(Emoji.IsEmoji("🏴󠁧󠁢󠁳󠁣󠁴󠁿")); // Scotland 
+        Assert.IsTrue(Emoji.IsEmoji("🏴󠁧󠁢󠁷󠁬󠁳󠁿")); // Wales
+        Assert.IsFalse(Emoji.IsEmoji("🏴󠁵󠁳󠁴󠁸󠁿")); // Texas 
+
+        Assert.IsFalse(Emoji.IsEmoji("🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁧󠁢󠁳󠁣󠁴󠁿", 1)); // England + Scotland
+        Assert.IsTrue(Emoji.IsEmoji("🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁧󠁢󠁳󠁣󠁴󠁿", 2)); // England + Scotland
+        Assert.IsFalse(Emoji.IsEmoji("🏴󠁧󠁢󠁥󠁮󠁧󠁿🏴󠁵󠁳󠁴󠁸󠁿", 2)); // England + Texas
     }
 
     [TestMethod]

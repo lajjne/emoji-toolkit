@@ -12,13 +12,6 @@ namespace EmojiToolkit;
 /// </summary>
 public static partial class Emoji {
 
-    // some important code points
-    private const string ZWJ = "\u200d"; // zero-width-joiner is used to combine multiple emoji codepoints into a single emoji symbol    
-    private const string VS16 = "\ufe0f"; // variant selector 16, an invisible codepoint which specifies that the preceding character should be displayed as emoji
-    private const string OBJ = "\ufffc"; // the object replacement character ￼ is used as a placeholder to indicate an object should replace this codepoint in the string
-    private const string KEYCAP = "\u20e3"; // the combined enclosing keycap ⃣ is used to box numbers and symbols
-    private const string SKIN_TONES = "🏻🏼🏽🏾🏿"; // light, medium-light, medium, medium-dark, dark
-
     // lookup tables for emoji
     private static readonly Dictionary<string, EmojiRecord> _asciiToEmoji = [];
     private static readonly Dictionary<string, EmojiRecord> _pointToEmoji = [];
@@ -244,7 +237,7 @@ public static partial class Emoji {
     /// <summary>
     /// Replaces emoji shortcodes and raw unicode strings in <paramref name="text"/> with &lt;span&gt; tags.
     /// </summary>
-    /// <param name="text">The text to spanifu.</param>
+    /// <param name="text">The text to spanify.</param>
     /// <param name="ascii"><c>true</c> to also replace ascii emoji, otherwise <c>false</c>.</param>
     /// <param name="css">CSS class to apply.</param>
     /// <returns>A string with emoji represented as &lt;span&gt; tags.</returns>    
@@ -277,90 +270,28 @@ public static partial class Emoji {
     /// Determines whether a string is comprised solely of emoji, optionally with a maximum number of symbols.
     /// Can be used to determine whether a message consists of more than <paramref name="maxSymbolCount"/> emoji for purposes such as displaying at a larger size.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="maxSymbolCount"></param>
+    /// <param name="text">The text to investigate.</param>
+    /// <param name="maxSymbolCount">Maximum number of allowed symbols.</param>
     /// <returns></returns>
-    /// <remarks>
-    /// Since one emoji symbol can be formed from many separate emoji "characters" combined with zero-width joiners
-    /// or even non-emoji characters followed by a "use emoji representation" marker,
-    /// this cannot be determined solely from the codepoints.
-    /// </remarks>
     public static bool IsEmoji(string text, int maxSymbolCount = int.MaxValue) {
-        // convert to hex codepoints
-        var codepoint = ToCodePoint(text);
-
-        // convert to uint codepoints
-        var codepoints = Array.ConvertAll(codepoint.Split('-'), (i) => uint.Parse(i, NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat));
-
-        var nextMustBeVS16 = false;
-        var ignoreNext = false;
         var count = 0;
-        foreach (var cp in codepoints) {
-            // convert codepoint to raw unicode string
-            var raw = Encoding.Unicode.GetString(EnumerateBytes(cp).ToArray());
-
+        var enumerator = StringInfo.GetTextElementEnumerator(text);
+        while (enumerator.MoveNext()) {
+            var raw = enumerator.GetTextElement();
             if (raw == "\n" || raw == "\r" || raw == "\t" || raw == " ") {
                 // whitespace doesn't count
                 continue;
             }
 
-            if (nextMustBeVS16) {
-                nextMustBeVS16 = false;
-                if (raw != VS16) {
-                    // a non-emoji codepoint was found and this (the codepoint after it) is not the variation selector
-                    return false;
-                }
-            }
-
-            if (SKIN_TONES.Contains(raw)) {
-                // don't count the skin tone as part of the length
-                continue;
-            }
-
-            if (raw == ZWJ) {
-                ignoreNext = true;
-                continue;
-            }
-
-            if (raw == VS16) {
-                continue;
-            }
-
-            if (raw == OBJ) {
-                // this is explicitly blacklisted for UI purposes
+            if (++count > maxSymbolCount) {
                 return false;
             }
-
-            if (raw == KEYCAP) {
-                // keycap is used to box symbols, do not consider it part of the length.
-                continue;
+            
+            if (Get(raw) == null) {
+                // a non-emoji symbol was found
+                return false;
             }
-
-            if (!ignoreNext) {
-                ++count;
-                if (count > maxSymbolCount) {
-                    return false;
-                }
-
-                if ("0123456789#*".Contains(raw)) {
-                    // by default numbers, the asterisk, and the number sign are emoji, but we won't consider them as such unless they are followed by a VS16
-                    nextMustBeVS16 = true;
-                    continue;
-                } else if (Get(raw) != null) {
-                    continue;
-                } else {
-                    // we've either encountered a non-emoji character OR a non-emoji codepoint that should be treated as an emoji if followed by VS16
-                    nextMustBeVS16 = true;
-                    continue;
-                }
-            }
-            ignoreNext = false;
         }
-
-        if (nextMustBeVS16) {
-            return false;
-        }
-
         return count > 0 && count <= maxSymbolCount;
     }
 
@@ -444,8 +375,6 @@ public static partial class Emoji {
             throw new Exception("Unsupported code point: " + codepoint);
         }
     }
-
-
 }
 
 /// <summary>

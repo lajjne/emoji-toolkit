@@ -8,7 +8,7 @@ public class EmojiTests {
 
     [TestMethod]
     public void All() {
-        Assert.AreEqual(3808, Emoji.All.Length);
+        Assert.AreEqual(3816, Emoji.All.Length);
     }
 
     [TestMethod]
@@ -623,6 +623,12 @@ public class EmojiTests {
         Assert.IsNotNull(Emoji.Get(":lime:"));
         Assert.IsNotNull(Emoji.Get(":phoenix:"));
         Assert.AreEqual(118, Emoji.All.Count(e => e.Version == 15.1));
+    }
+
+    [TestMethod]
+    public void Version16Emoji() {
+        Assert.AreEqual(8, Emoji.All.Count(e => e.Version == 16));
+        Assert.IsNotNull(Emoji.Get(":fingerprint:"));
     }
 
     [TestMethod]

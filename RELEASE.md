@@ -1,6 +1,6 @@
 # Update with new emoji
 
-1. Download new [`emoji.json`](/emoji.json) from https://github.com/joypixels/emoji-toolkit/blob/master/emoji.json.
+1. Download new [`emoji.json`](/emoji.json) from https://raw.githubusercontent.com/joypixels/emoji-assets/refs/heads/master/emoji.json.
 2. Generate  `Emoji.generated.cs` with `dotnet run` in the `\src\Generator` folder.
 3. Add unit tests for the new emoji version.
 

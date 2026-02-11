@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="emoji.json" />
+    <File Path="README.md" />
+    <File Path="RELEASE.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/EmojiToolkit/EmojiToolkit.csproj" />
+    <Project Path="src/Generator/Generator.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/EmojiToolkit.Tests/EmojiToolkit.Tests.csproj" />
+  </Folder>
+</Solution>

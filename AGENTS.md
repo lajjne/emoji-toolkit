@@ -27,8 +27,8 @@ dotnet pack -c Release .\src\EmojiToolkit\EmojiToolkit.csproj
 ## Generated code and data updates
 
 - `src\EmojiToolkit\Emoji.generated.cs` is generated output.
-- Do not hand-edit `Emoji.generated.cs` unless absolutely necessary.
-- If `emojibase-data` changes, regenerate:
+- Never hand-edit `Emoji.generated.cs`.
+- When `emojibase-data` changes, regenerate:
 
 ```powershell
 dotnet run --project .\src\Generator\Generator.csproj

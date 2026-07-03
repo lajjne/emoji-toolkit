@@ -594,6 +594,40 @@ public class EmojiTests {
     }
 
     [TestMethod]
+    public void ZWJSequence() {
+        // :family: is a not a ZWJ sequence
+        var raw = "👪";
+
+        var codepoint = Emoji.ToCodePoint(raw);
+        Assert.AreEqual("1f46a", codepoint);
+
+        var shortcode = Emoji.Shortcode(raw);
+        Assert.AreEqual(":family:", shortcode);
+
+        // :family_mwgb: is a ZWJ sequence combining :man:, :woman:, :girl: and :boy:
+        raw = "👨‍👩‍👧‍👦";
+        codepoint = Emoji.ToCodePoint(raw);
+        Assert.AreEqual("1f468-200d-1f469-200d-1f467-200d-1f466", codepoint);
+
+        shortcode = Emoji.Shortcode(raw);
+        Assert.AreNotEqual(":man:‍:woman:‍:girl:‍:boy:", shortcode);
+        Assert.AreEqual(":family_mwgb:", shortcode);
+
+        // :man_shrugging: is a ZWJ sequence combining :person_shrugging: (🤷), Zero Width Joiner (ZWJ) and :male_sign: (♂️)           
+        raw = "🤷‍♂️";
+        codepoint = Emoji.ToCodePoint(raw);
+        Assert.AreEqual("1f937-200d-2642-fe0f", codepoint);
+
+        shortcode = Emoji.Shortcode(raw);
+        Assert.AreNotEqual(":person_shrugging:‍:male_sign:", shortcode);
+        Assert.AreEqual(":man_shrugging:", shortcode);
+
+        var surrogate = Emoji.ToSurrogate(codepoint);
+        Assert.AreNotEqual(@"\ud83e\udd37", surrogate);
+        Assert.AreEqual(@"\ud83e\udd37\u200d\u2642\ufe0f", surrogate);
+    }
+
+    [TestMethod]
     public void Version11Emoji() {
         var emoji = Emoji.Get("🥶");
         Assert.AreEqual(":cold:", emoji.Shortcodes[0]);
@@ -641,39 +675,5 @@ public class EmojiTests {
     public void Version17Emoji() {
         Assert.AreEqual(163, Emoji.All.Count(e => e.Version == 17));
         Assert.IsNotNull(Emoji.Get(":distorted_face:"));
-    }
-
-    [TestMethod]
-    public void ZWJSequence() {
-        // :family: is a not a ZWJ sequence
-        var raw = "👪";
-
-        var codepoint = Emoji.ToCodePoint(raw);
-        Assert.AreEqual("1f46a", codepoint);
-
-        var shortcode = Emoji.Shortcode(raw);
-        Assert.AreEqual(":family:", shortcode);
-
-        // :family_mwgb: is a ZWJ sequence combining :man:, :woman:, :girl: and :boy:
-        raw = "👨‍👩‍👧‍👦";
-        codepoint = Emoji.ToCodePoint(raw);
-        Assert.AreEqual("1f468-200d-1f469-200d-1f467-200d-1f466", codepoint);
-
-        shortcode = Emoji.Shortcode(raw);
-        Assert.AreNotEqual(":man:‍:woman:‍:girl:‍:boy:", shortcode);
-        Assert.AreEqual(":family_mwgb:", shortcode);
-
-        // :man_shrugging: is a ZWJ sequence combining :person_shrugging: (🤷), Zero Width Joiner (ZWJ) and :male_sign: (♂️)           
-        raw = "🤷‍♂️";
-        codepoint = Emoji.ToCodePoint(raw);
-        Assert.AreEqual("1f937-200d-2642-fe0f", codepoint);
-
-        shortcode = Emoji.Shortcode(raw);
-        Assert.AreNotEqual(":person_shrugging:‍:male_sign:", shortcode);
-        Assert.AreEqual(":man_shrugging:", shortcode);
-
-        var surrogate = Emoji.ToSurrogate(codepoint);
-        Assert.AreNotEqual(@"\ud83e\udd37", surrogate);
-        Assert.AreEqual(@"\ud83e\udd37\u200d\u2642\ufe0f", surrogate);
     }
 }

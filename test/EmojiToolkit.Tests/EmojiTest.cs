@@ -8,29 +8,29 @@ public class EmojiTests {
 
     [TestMethod]
     public void All() {
-        Assert.AreEqual(3816, Emoji.All.Length);
+        Assert.AreEqual(3979, Emoji.All.Length);
     }
 
     [TestMethod]
     public void Ascii() {
-        Assert.AreEqual(":)", Emoji.Ascii(":slight_smile:"));
+        Assert.AreEqual(":)", Emoji.Ascii(":slightly_smiling_face:"));
         Assert.AreEqual(":D", Emoji.Ascii("😄"));
-        Assert.IsNull(Emoji.Ascii(":poop:"));
+        Assert.IsNull(Emoji.Ascii(":shit:"));
     }
 
     [TestMethod]
     public void Asciify() {
-        var text = ":poop: :slight_smile: 🍺 😄";
-        var expected = ":poop: :) 🍺 :D";
+        var text = ":shit: :slightly_smiling_face: 🍺 😄";
+        var expected = ":shit: :) 🍺 :D";
         var actual = Emoji.Asciify(text);
         Assert.AreEqual(expected, actual);
 
-        text = "poop:)";
+        text = "shit:)";
         expected = text;
         actual = Emoji.Asciify(text);
         Assert.AreEqual(expected, actual);
 
-        text = $@"Emoji in <img alt=""😄"" src=""/img.png"" /> shouf not be replaced";
+        text = $@"Emoji in <img alt=""😄"" src=""/img.png"" /> should not be replaced";
         expected = text;
         actual = Emoji.Asciify(text);
         Assert.AreEqual(expected, actual);
@@ -40,7 +40,7 @@ public class EmojiTests {
     public void Demojify() {
         // to short
         var text = "Hello world! 😄 :smile:";
-        var expected = "Hello world! :smile: :smile:";
+        var expected = "Hello world! :grinning_face_with_closed_eyes: :smile:";
         var actual = Emoji.Demojify(text);
         Assert.AreEqual(expected, actual);
 
@@ -132,20 +132,20 @@ public class EmojiTests {
     [TestMethod]
     public void DiversityShortcodes() {
         var shortcode = Emoji.Shortcode("👍");
-        Assert.AreEqual(":thumbsup:", shortcode);
+        Assert.AreEqual(":+1:", shortcode);
 
         shortcode = Emoji.Shortcode("👍🏻");
-        Assert.AreEqual(":thumbsup_tone1:", shortcode);
+        Assert.AreEqual(":+1_tone1:", shortcode);
 
         shortcode = Emoji.Shortcode("👍🏿");
-        Assert.AreEqual(":thumbsup_tone5:", shortcode);
+        Assert.AreEqual(":+1_tone5:", shortcode);
     }
 
     [TestMethod]
     public void Emojify() {
         // shortname to unicode
-        var text = "Hello world! 😄 :smile:";
-        var expected = "Hello world! 😄 😄";
+        var text = "Hello world! 😄 :smile: :grinning_face_with_closed_eyes:";
+        var expected = "Hello world! 😄 😄 😄";
         var actual = Emoji.Emojify(text);
         Assert.AreEqual(expected, actual);
 
@@ -228,7 +228,7 @@ public class EmojiTests {
         Assert.AreEqual(expected, actual);
 
         // shortname alias
-        text = ":poo:";
+        text = ":shit:";
         expected = "💩";
         actual = Emoji.Emojify(text);
         Assert.AreEqual(expected, actual);
@@ -250,12 +250,12 @@ public class EmojiTests {
 
         // multiple smileys
         text = ";) :P :* :)";
-        expected = "😉 😛 😘 🙂";
+        expected = "😉 😛 😚 🙂";
         actual = Emoji.Emojify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
         // smiley to start a sentence
-        text = @":\ is our confused smiley.";
+        text = @":/ is our confused smiley.";
         expected = "😕 is our confused smiley.";
         actual = Emoji.Emojify(text, ascii: true);
         Assert.AreEqual(expected, actual);
@@ -309,17 +309,23 @@ public class EmojiTests {
         var emoji = Emoji.Find("party popper");
         Assert.AreEqual("🎉", emoji.Single().Raw);
 
+        var party = Emoji.Get("🎉");
+
         // find emoji by category
-        emoji = Emoji.Find("objects");
+        emoji = Emoji.Find(party.Category);
         Assert.IsTrue(emoji.Any(e => e.Raw == "🎉"));
 
         // find emoji by shortcode
-        emoji = Emoji.Find(":party");
-        Assert.IsTrue(emoji.Any(e => e.Raw == "🎉"));
+        foreach (var shortcode in party.Shortcodes) {
+            emoji = Emoji.Find(shortcode);
+            Assert.IsTrue(emoji.Any(e => e.Raw == "🎉"));
+        }
 
         // find emoji by tag
-        emoji = Emoji.Find("celebration");
-        Assert.IsTrue(emoji.Any(e => e.Raw == "🎉"));
+        foreach (var tag in party.Tags) {
+            emoji = Emoji.Find(tag);
+            Assert.IsTrue(emoji.Any(e => e.Raw == "🎉"));
+        }        
     }
 
     [TestMethod]
@@ -362,7 +368,7 @@ public class EmojiTests {
     public void Imagify() {
         // mixed unicode, shortname and ascii
         var text = "Hello 😄 :smile: world :D";
-        var expected = $@"Hello <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" /> world <img class=""emoji"" alt=""😄"" title="":smile:"" src=""/emoji/1f604.png"" />";
+        var expected = $@"Hello <img class=""emoji"" alt=""😄"" title="":grinning_face_with_closed_eyes:"" src=""/emoji/1f604.png"" /> <img class=""emoji"" alt=""😄"" title="":grinning_face_with_closed_eyes:"" src=""/emoji/1f604.png"" /> world <img class=""emoji"" alt=""😄"" title="":grinning_face_with_closed_eyes:"" src=""/emoji/1f604.png"" />";
         var actual = Emoji.Imagify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
@@ -402,7 +408,7 @@ public class EmojiTests {
     public void Spanify() {
         // mixed unicode, shortname and ascii
         var text = "Hello 😄 :smile: world :D";
-        var expected = $@"Hello <span class=""emoji"" title="":smile:"">😄</span> <span class=""emoji"" title="":smile:"">😄</span> world <span class=""emoji"" title="":smile:"">😄</span>";
+        var expected = $@"Hello <span class=""emoji"" title="":grinning_face_with_closed_eyes:"">😄</span> <span class=""emoji"" title="":grinning_face_with_closed_eyes:"">😄</span> world <span class=""emoji"" title="":grinning_face_with_closed_eyes:"">😄</span>";
         var actual = Emoji.Spanify(text, ascii: true);
         Assert.AreEqual(expected, actual);
 
@@ -494,16 +500,16 @@ public class EmojiTests {
     [TestMethod]
     public void ReadmeTest() {
         // gets an emoji by shortcode
-        var raw = Emoji.Get(":smiley:").Raw;
-        Assert.AreEqual("😃", raw);
+        var raw = Emoji.Get(":wink:").Raw;
+        Assert.AreEqual("😉", raw);
 
         //  get an emoji by ascii equivalent
-        raw = Emoji.Get(":-D").Raw;
-        Assert.AreEqual("😃", raw);
+        raw = Emoji.Get(";)").Raw;
+        Assert.AreEqual("😉", raw);
 
         // gets an emoji by raw unicode string
-        var name = Emoji.Get("😃").Name;
-        Assert.AreEqual("grinning face with big eyes", name);
+        var name = Emoji.Get("😉").Name;
+        Assert.AreEqual("winking face", name);
 
         // gets the ascii equivalent of an emoji
         var ascii = Emoji.Ascii("😉");
@@ -514,12 +520,12 @@ public class EmojiTests {
         Assert.AreEqual("""<img class="emoji" alt="😉" title=":wink:" src="/emoji/1f609.png" />""", img);
 
         // gets the raw unicode equivalent for an emoji shortcode
-        raw = Emoji.Raw(":smiley:");
-        Assert.AreEqual("😃", raw);
+        raw = Emoji.Raw(":wink:");
+        Assert.AreEqual("😉", raw);
 
         // gets the shortcode for a raw unicode string
-        var shortcode = Emoji.Shortcode("😃");
-        Assert.AreEqual(":smiley:", shortcode);
+        var shortcode = Emoji.Shortcode("😉");
+        Assert.AreEqual(":wink:", shortcode);
 
         // gets <span> tag for the specified emoji
         var span = Emoji.Span(":wink:");
@@ -531,27 +537,27 @@ public class EmojiTests {
 
         // replaces emoji shortcodes with raw unicode strings.
         var emojified = Emoji.Emojify("it's raining :cat:s and :dog:s!");
-        Assert.AreEqual("it's raining 🐱s and 🐶s!", emojified);
+        Assert.AreEqual("it's raining 🐈s and 🐕s!", emojified);
 
         // replaces raw unicode strings with emoji shortcodes
-        var demojified = Emoji.Demojify("it's raining 🐱s and 🐶s!");
+        var demojified = Emoji.Demojify("it's raining 🐈s and 🐕s!");
         Assert.AreEqual("it's raining :cat:s and :dog:s!", demojified);
 
         // replaces emoji shortcodes and raw unicode strings with <img> tags
-        var imagified = Emoji.Imagify("it's raining :cat:s and 🐶s!");
-        Assert.AreEqual("""it's raining <img class="emoji" alt="🐱" title=":cat:" src="/emoji/1f431.png" />s and <img class="emoji" alt="🐶" title=":dog:" src="/emoji/1f436.png" />s!""", imagified);
+        var imagified = Emoji.Imagify("it's raining :cat:s and 🐕s!");
+        Assert.AreEqual("""it's raining <img class="emoji" alt="🐈" title=":cat:" src="/emoji/1f408.png" />s and <img class="emoji" alt="🐕" title=":dog:" src="/emoji/1f415.png" />s!""", imagified);
 
         // replaces emoji shortcodes and raw unicode strings with <span> tags
-        var spanified = Emoji.Spanify("it's raining :cat:s and 🐶s!");
-        Assert.AreEqual("""it's raining <span class="emoji" title=":cat:">🐱</span>s and <span class="emoji" title=":dog:">🐶</span>s!""", spanified);
+        var spanified = Emoji.Spanify("it's raining :cat:s and 🐕s!");
+        Assert.AreEqual("""it's raining <span class="emoji" title=":cat:">🐈</span>s and <span class="emoji" title=":dog:">🐕</span>s!""", spanified);
 
         // returns emoji with matching name, category, shortcodes or tags
-        var emoji = Emoji.Find("smile").First();
-        Assert.AreEqual("😃", emoji.Raw);
+        var emoji = Emoji.Find("wink").First();
+        Assert.AreEqual("😉", emoji.Raw);
 
         // determines whether a string is comprised solely of emoji
-        Assert.IsTrue(Emoji.IsEmoji("🐱🐶"));
-        Assert.IsFalse(Emoji.IsEmoji("it's raining 🐱s and 🐶s!"));
+        Assert.IsTrue(Emoji.IsEmoji("🐈🐕"));
+        Assert.IsFalse(Emoji.IsEmoji("it's raining 🐈s and 🐕s!"));
     }
 
     [TestMethod]
@@ -590,13 +596,13 @@ public class EmojiTests {
     [TestMethod]
     public void Version11Emoji() {
         var emoji = Emoji.Get("🥶");
-        Assert.AreEqual(":cold_face:", emoji.Shortcodes[0]);
+        Assert.AreEqual(":cold:", emoji.Shortcodes[0]);
     }
 
     [TestMethod]
     public void Version12Emoji() {
         var emoji = Emoji.Get("🥱");
-        Assert.AreEqual(":yawning_face:", emoji.Shortcodes[0]);
+        Assert.AreEqual(":yawn:", emoji.Shortcodes[0]);
     }
 
     [TestMethod]
@@ -620,15 +626,21 @@ public class EmojiTests {
 
     [TestMethod]
     public void Version151Emoji() {
-        Assert.IsNotNull(Emoji.Get(":lime:"));
-        Assert.IsNotNull(Emoji.Get(":phoenix:"));
         Assert.AreEqual(118, Emoji.All.Count(e => e.Version == 15.1));
+        Assert.IsNotNull(Emoji.Get(":lime:"));
+        Assert.IsNotNull(Emoji.Get(":phoenix:"));        
     }
 
     [TestMethod]
     public void Version16Emoji() {
         Assert.AreEqual(8, Emoji.All.Count(e => e.Version == 16));
         Assert.IsNotNull(Emoji.Get(":fingerprint:"));
+    }
+
+    [TestMethod]
+    public void Version17Emoji() {
+        Assert.AreEqual(163, Emoji.All.Count(e => e.Version == 17));
+        Assert.IsNotNull(Emoji.Get(":distorted_face:"));
     }
 
     [TestMethod]

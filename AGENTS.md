@@ -11,7 +11,7 @@ These instructions apply to the entire repository.
 - Language/runtime: C# on .NET 10 (`net10.0`)
 - Main library: `src\EmojiToolkit`
 - Tests: `test\EmojiToolkit.Tests` (MSTest)
-- Data source: `emoji.json`
+- Data source: `emojibase-data` (npm package)
 - Code generator: `src\Generator`
 
 ## Build, test, and packaging
@@ -28,25 +28,30 @@ dotnet pack -c Release .\src\EmojiToolkit\EmojiToolkit.csproj
 
 - `src\EmojiToolkit\Emoji.generated.cs` is generated output.
 - Do not hand-edit `Emoji.generated.cs` unless absolutely necessary.
-- If `emoji.json` changes, regenerate:
+- If `emojibase-data` changes, regenerate:
 
 ```powershell
-dotnet run --project .\src\Generator\Generator.csproj .\emoji.json
+dotnet run --project .\src\Generator\Generator.csproj
 ```
 
-- Commit related changes together (`emoji.json`, generated code, and tests/docs as needed).
+- Commit related changes together (`package.json`/`package-lock.json`, generated code, and tests/docs as needed).
 
 ### Updating with new emoji
 
 When updating this repo to a newer emoji dataset, follow this workflow:
 
-1. Download the latest `emoji.json` from:
-   `https://raw.githubusercontent.com/joypixels/emoji-assets/refs/heads/master/emoji.json`
-   and replace the repository root `emoji.json`.
+1. Install/update `emojibase-data` in the repository root:
+
+```powershell
+npm install
+# or pin a specific version:
+npm install emojibase-data@<unicode-version>
+```
+
 2. Regenerate `src\EmojiToolkit\Emoji.generated.cs`:
 
 ```powershell
-dotnet run --project .\src\Generator\Generator.csproj .\emoji.json
+dotnet run --project .\src\Generator\Generator.csproj
 ```
 
 3. Add or update unit tests for the new emoji version in `test\EmojiToolkit.Tests\EmojiTest.cs`.
@@ -56,7 +61,7 @@ dotnet run --project .\src\Generator\Generator.csproj .\emoji.json
 dotnet test .\test\EmojiToolkit.Tests\EmojiToolkit.Tests.csproj
 ```
 
-5. Commit related updates together (`emoji.json`, `src\EmojiToolkit\Emoji.generated.cs`, and test changes).
+5. Commit related updates together (`package.json`/`package-lock.json`, `src\EmojiToolkit\Emoji.generated.cs`, and test changes).
 
 ## Editing guidelines
 

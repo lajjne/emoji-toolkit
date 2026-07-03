@@ -11,7 +11,7 @@ namespace EmojiToolkit;
 /// Utility class for working with emoji.
 /// </summary>
 public static partial class Emoji {
-
+     
     // lookup tables for emoji
     private static readonly Dictionary<string, EmojiRecord> _asciiToEmoji = [];
     private static readonly Dictionary<string, EmojiRecord> _pointToEmoji = [];

@@ -1,0 +1,7 @@
+{
+  "name": "emoji-toolkit-data",
+  "private": true,
+  "dependencies": {
+    "emojibase-data": "17.0.0"
+  }
+}

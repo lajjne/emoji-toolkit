@@ -3,6 +3,7 @@
     <File Path="AGENTS.md" />
     <File Path="Directory.Build.props" />
     <File Path="emoji.json" />
+    <File Path="package.json" />
     <File Path="README.md" />
     <File Path="RELEASE.md" />
   </Folder>
